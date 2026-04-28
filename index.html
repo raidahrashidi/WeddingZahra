@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RSVP | Hassan & Raihana</title>
+  <meta name="description" content="Majlis perkahwinan Hassan & Raihana" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --text: #4b3c3c;
+      --maroon: #7a2e3a;
+      --gold: #b68d61;
+      --warm-brown: #7d472a;
+      --deep-mauve: #7D5A6B;
+      --pink: #e982a0;
+      --soft-pink: #fff6f9;
+      --shadow: 0 14px 40px rgba(122, 46, 58, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+      background: var(--soft-pink);
+      overflow-x: hidden;
+    }
+
+    body.popup-open { overflow: hidden; }
+    a { color: inherit; text-decoration: none; }
+
+    .site-shell {
+      width: min(100vw, calc(100vh * 1080 / 1920));
+      min-height: 100vh;
+      margin: 0 auto;
+      position: relative;
+      background: #fff7fb;
+      box-shadow: 0 20px 60px rgba(122,46,58,0.14);
+      overflow: hidden;
+      padding-bottom: 92px;
+    }
+
+    .container { width: 100%; padding: 0 18px; }
+    .section { padding: 34px 18px; position: relative; }
+
+    .card {
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(255,255,255,0.78);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 26px;
+    }
+
+    .section-kicker,
+    .scroll-kicker {
+      text-align: center;
+      color: var(--gold);
+      font-size: 0.60rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    /* ================= POPUP / CURTAIN ================= */
+    .curtain-popup {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #f9edf2 0%, #f6e4ea 100%);
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+      overflow: hidden;
+    }
+
+    .curtain-popup.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .popup-stage {
+      position: relative;
+      width: min(100vw, calc(100vh * 1080 / 1920));
+      height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.65), transparent 36%), linear-gradient(180deg, #fff7fa 0%, #f8ebf0 100%);
+    }
+
+    .popup-center-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.95), rgba(255,255,255,0.15) 36%, transparent 62%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .popup-castle,
+    .popup-sparkles {
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .popup-castle {
+      left: 50%;
+      top: 54%;
+      transform: translate(-50%, -50%);
+      width: 150%;
+      opacity: 0.24;
+      z-index: 1;
+      filter: blur(0.5px);
+    }
+
+    .popup-sparkles {
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 2;
+      opacity: 0.28;
+      mix-blend-mode: screen;
+    }
+
+    .popup-content {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      pointer-events: auto;
+    }
+
+    .seal-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.6s ease;
+    }
+
+    .seal-btn img {
+      width: 180px;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.25));
+      transition: all 0.3s ease;
+    }
+
+    .seal-btn:hover img {
+      transform: scale(1.08);
+      filter: drop-shadow(0 15px 25px rgba(0,0,0,0.35));
+    }
+
+    .seal-btn.shrink { transform: scale(0); opacity: 0; }
+
+    .curtain-left,
+    .curtain-right {
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      z-index: 10;
+      transition: transform 1.9s cubic-bezier(0.77, 0, 0.18, 1);
+      background: linear-gradient(180deg, #d7a7b6 0%, #c48399 45%, #af647c 100%);
+      box-shadow: inset 0 0 36px rgba(120,40,60,0.12);
+      overflow: hidden;
+    }
+
+    .curtain-left { left: 0; }
+    .curtain-right { right: 0; }
+
+    .curtain-left::before,
+    .curtain-right::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.09) 0px, rgba(255,255,255,0.09) 10px, rgba(155,86,108,0.12) 10px, rgba(155,86,108,0.12) 24px);
+      opacity: 0.75;
+    }
+
+    .curtain-popup.open .curtain-left { transform: translateX(-100%); }
+    .curtain-popup.open .curtain-right { transform: translateX(100%); }
+
+    .sparkle-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: radial-gradient(circle, #ffd700 0%, transparent 70%);
+      border-radius: 50%;
+      opacity: 0;
+      animation: sparkleBurst 0.8s ease forwards;
+    }
+
+    @keyframes sparkleBurst {
+      0% { opacity: 1; transform: scale(0.5) translate(0, 0); }
+      100% { opacity: 0; transform: scale(1.5) translate(var(--x), var(--y)); }
+    }
+
+    /* ================= INTRO ================= */
+    .intro-section { position: relative; width: 100%; }
+    .intro-stage { position: relative; width: 100%; height: 100vh; overflow: hidden; background: #f9eef1; }
+
+    .intro-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .intro-bgimg { z-index: 1; }
+    .intro-sparkles { z-index: 2; opacity: 0; animation: sparkleFadeIn 1.5s ease forwards 0.15s; mix-blend-mode: screen; }
+    .intro-castle { z-index: 4; transform: translateY(110%); opacity: 0; animation: castleRise 2s cubic-bezier(.22,.61,.36,1) forwards 0.9s; }
+    .intro-border { z-index: 10; transform: scale(1.08); opacity: 0; animation: borderZoomIn 1.8s ease forwards 0.15s; }
+    .intro-chandelier { z-index: 5; transform: translateY(-120%); opacity: 0; animation: chandelierDrop 1.45s cubic-bezier(.22,.61,.36,1) forwards 0.9s; filter: drop-shadow(0 0 18px rgba(255,255,255,0.55)); }
+
+    .intro-flower {
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      opacity: 0;
+      z-index: 12;
+    }
+
+    .flower-top-left { top: -4%; left: 0; width: 100%; animation: topFlowerFade 1.1s ease forwards 2.7s, swayLeft 4s ease-in-out infinite 4s; }
+    .flower-top-right { top: -4%; left: 0; width: 100%; animation: topFlowerFade 1.1s ease forwards 2.7s, swayRight 4s ease-in-out infinite 4s; }
+    .flower-bottom-middle { left: 50%; bottom: 2.2%; width: 110%; transform: translateX(-50%); animation: bottomMidUp 1.3s cubic-bezier(.22,.61,.36,1) forwards 1.9s, driftCenter 4.6s ease-in-out infinite 4s; }
+    .flower-bottom-left { left: 1.8%; bottom: -10%; width: 120%; animation: bottomLeftIn 1.3s cubic-bezier(.22,.61,.36,1) forwards 1.9s, driftLeft 4.2s ease-in-out infinite 4s; }
+    .flower-bottom-right { right: 1.8%; bottom: -10%; width: 120%; animation: bottomRightIn 1.3s cubic-bezier(.22,.61,.36,1) forwards 1.9s, driftRight 4.2s ease-in-out infinite 4s; }
+
+    .intro-couple {
+      position: absolute;
+      z-index: 11;
+      left: 50%;
+      bottom: 4.8%;
+      width: 50%;
+      transform: translateX(-50%) translateY(25px);
+      opacity: 0;
+      animation: coupleUp 1.3s ease forwards 2.25s;
+      pointer-events: none;
+    }
+
+    .intro-copy {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 9%;
+      pointer-events: none;
+      transform: translateY(-10%);
+    }
+
+    .intro-small,
+    .intro-title,
+    .intro-note { opacity: 0; transform: translateY(20px); animation: riseIn 1s ease forwards; text-shadow: 0 2px 16px rgba(255,255,255,0.78); }
+    .intro-small { animation-delay: 3.1s; font-family: "Cormorant Garamond", serif; font-size: clamp(1rem, 2.2vw, 1.7rem); color: #bf8fa0; font-style: italic; margin-bottom: 6px; }
+    .intro-title { animation-delay: 3.35s; font-family: "Cormorant Garamond", serif; font-size: clamp(2.8rem, 7vw, 5.2rem); line-height: 0.9; margin: 0 0 10px; font-weight: 600; color: #c47188; }
+    .intro-note { animation-delay: 3.6s; max-width: 80%; margin: 0 auto; color: #8d6e77; font-size: 0.92rem; }
+
+    @keyframes borderZoomIn { from { transform: scale(1.04); opacity: 0; } to { transform: scale(1.18); opacity: 1; } }
+    @keyframes sparkleFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes castleRise { from { transform: translateY(110%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes chandelierDrop { from { transform: translateY(-120%); opacity: 0; } to { transform: translateY(-1%); opacity: 1; } }
+    @keyframes bottomMidUp { from { transform: translateX(-50%) translateY(120%); opacity: 0; } to { transform: translateX(-50%) translateY(10%); opacity: 1; } }
+    @keyframes bottomLeftIn { from { transform: translateX(-110%); opacity: 0; } to { transform: translateX(-5%); opacity: 1; } }
+    @keyframes bottomRightIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(5%); opacity: 1; } }
+    @keyframes topFlowerFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes coupleUp { from { transform: translateX(-50%) translateY(40px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+    @keyframes swayLeft { 0%,100% { transform: translateX(-28px); } 50% { transform: translateX(-10px); } }
+    @keyframes swayRight { 0%,100% { transform: translateX(28px); } 50% { transform: translateX(10px); } }
+    @keyframes driftCenter { 0%,100% { transform: translateX(-50%) translateY(65px); } 50% { transform: translateX(calc(-50% - 5px)) translateY(65px); } }
+    @keyframes driftLeft { 0%,100% { transform: translateX(-30px); } 50% { transform: translateX(-42px); } }
+    @keyframes driftRight { 0%,100% { transform: translateX(30px); } 50% { transform: translateX(42px); } }
+    @keyframes riseIn { to { opacity: 1; transform: translateY(0); } }
+
+    /* ================= STORY ================= */
+    .main-view { width: 100%; min-height: 100vh; position: relative; }
+    .frame-page { position: relative; min-height: 100vh; background: linear-gradient(180deg, #fff9fb 0%, #fff6fa 100%); overflow: hidden; }
+
+    .royal-story-section { position: relative; padding: 0; }
+    .royal-story-section .container { max-width: 100%; padding: 0; }
+    .royal-story-wrap { position: relative; height: 100vh; width: 100%; overflow: hidden; }
+
+    .royal-bg-layer,
+    .royal-scroll-layer {
+      position: absolute;
+      inset: 0;
+    }
+
+    .royal-bg-layer { z-index: 1; }
+    .royal-bg-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .royal-scroll-layer {
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 109.5%;
+      transform: translateX(-4.5%);
+    }
+
+    .royal-scroll-frame { width: 90%; display: block; filter: drop-shadow(0 18px 36px rgba(122,46,58,0.14)); }
+
+    .royal-scroll-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: min(60%, 270px);
+      transform: translate(-50%, -52%);
+      text-align: center;
+      z-index: 4;
+      color: #6f5a5f;
+    }
+
+    .arabic-text { font-family: 'Amiri', serif; font-size: 1rem; direction: rtl; line-height: 1.7; color: #8a3a4a; margin: 0 0 5px; }
+    .royal-pantun { font-family: "Cormorant Garamond", serif; font-size: 0.6rem; line-height: 1.32; color: #8f6a74; margin: 8px 0 5px; font-style: italic;font-weight: 600; }
+    .royal-parents,
+    .royal-couple { font-size: 0.85rem; font-weight: 800; line-height: 1.1; color: #9a4d61; margin: 8px 0; }
+    .royal-meta-invite { font-size: 0.55rem; letter-spacing: 0.01em; color: var(--warm-brown); margin: 6px 0; line-height: 1.35; }
+    .royal-meta-title { font-size: 0.75rem; color: #6a5a5f; margin-top: 10px; line-height: 1.35; }
+    .royal-meta-title a { color: var(--maroon); font-weight: 700; }
+
+    /* ================= COUNTDOWN ================= */
+    .countdown-section {
+      position: relative;
+      padding: 100px 18px 90px;
+      background: url("images/20.png") no-repeat center center;
+      background-size: cover;
+      overflow: hidden;
+    }
+
+    .countdown-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(255,247,251,0.28);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .countdown-section .container { position: relative; z-index: 2; }
+    .countdown-card { max-width: 430px; margin: 0 auto; padding: 20px 16px 26px; border-radius: 30px; text-align: center; }
+
+    .countdown-rings { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; align-items: start; margin-top: 10px; }
+    .ring-box { display: flex; justify-content: center; }
+    .ring { --size: 88px; --track: #e8c8d0; --number: #8a3a4a; --label: #9a6e78; --circumference: 377; position: relative; width: var(--size); height: var(--size); }
+    .ring svg { width: 100%; height: 100%; display: block; transform: rotate(-90deg); overflow: visible; }
+    .ring .track,
+    .ring .progress { fill: none; stroke-width: 8; stroke-linecap: round; }
+    .ring .track { stroke: var(--track); }
+    .progress-days { stroke: url(#goldGradientDays); }
+    .progress-hours { stroke: url(#goldGradientHours); }
+    .progress-minutes { stroke: url(#goldGradientMinutes); }
+    .progress-seconds { stroke: url(#goldGradientSeconds); }
+    .ring .progress { stroke-dasharray: var(--circumference); stroke-dashoffset: var(--circumference); transition: stroke-dashoffset 0.8s ease; filter: drop-shadow(0 0 5px rgba(201,163,95,0.35)); animation: goldGlow 3s ease-in-out infinite alternate; }
+    .ring-content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ring-number { font-family: "Cormorant Garamond", serif; font-size: 1.5rem; line-height: 1; color: var(--number); font-weight: 700; }
+    .ring-label { margin-top: 4px; font-size: 0.52rem; color: var(--label); letter-spacing: 0.12em; text-transform: uppercase; }
+    @keyframes goldGlow { from { filter: drop-shadow(0 0 2px rgba(201,163,95,0.18)); } to { filter: drop-shadow(0 0 8px rgba(201,163,95,0.45)); } }
+
+    /* ================= RSVP ================= */
+    .scroll-reveal { opacity: 0; transform: translateY(70px) scale(0.96); transition: opacity 0.9s ease, transform 0.9s ease; }
+    .scroll-reveal.show { opacity: 1; transform: translateY(0) scale(1); }
+
+    .rsvp-royal-section {position: relative; padding: 0; overflow: hidden; }
+    .rsvp-fullwidth { width: 100%; display: flex; justify-content: center; }
+
+    .rsvp-royal-shell {
+      position: relative;
+      width: 100%;
+      min-height: 10px;
+      overflow: hidden;
+    }
+
+    .rsvp-royal-bg {
+      position: absolute;
+      width: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .rsvp-royal-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      z-index: 1;
+    }
+
+    .rsvp-royal-content {
+      position: relative;
+      z-index: 2;
+      max-width: 520px;
+      margin-top:  65px;
+    }
+
+    .rsvp-crown { font-size: 34px; text-align: center; margin-bottom: 6px; animation: crownFloat 2.8s ease-in-out infinite; }
+    .rsvp-title { text-align: center; margin: 4px 0 0; font-family: "Cormorant Garamond", serif; font-size: 1.2rem; color: #9f4d63; font-weight: 700; }
+
+    .royal-divider {
+      width: 180px;
+      height: 1px;
+      margin: 16px auto 0px;
+      background: linear-gradient(90deg, transparent, rgba(201,163,95,0.8), transparent);
+      position: relative;
+    }
+
+    .royal-divider::after {
+      content: "✦";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -55%);
+      color: #c9a35f;
+      font-size: 0.8rem;
+      padding: 0 8px;
+    }
+
+    .royal-rsvp-form.one-column {
+      width: 100%;
+      margin: 0 35px;
+      display: grid;
+      gap: 0px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 60px 3fr;
+      column-gap: 10px;
+      align-items: center;
+      margin-right: 65px;
+    }
+
+    .side-icon {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+      transform: translateY(-4px);
+    }
+
+    .field-row.align-top {
+      align-items: start;
+    }
+
+    .field-row.align-top .side-icon {
+      transform: translateY(-10px);
+    }
+
+    .input-shell,
+    .textarea-shell,
+    .form-group { width: 90%; margin: 0; }
+
+    .input-shell {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(222,145,165,0.35);
+      box-shadow: 0 14px 28px rgba(160,70,90,0.07);
+      transition: 0.25s ease;
+    }
+
+    .input-shell:focus-within,
+    .textarea-shell:focus-within {
+      border-color: rgba(126,62,78,0.45);
+      box-shadow: 0 14px 34px rgba(126,62,78,0.14);
+      transform: translateY(-1px);
+    }
+
+    .input-shell input,
+    .input-shell select {
+      width: 100%;
+      height: 30px;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 0 22px;
+      font-size: 0.70rem;
+      color: #5c3039;
+    }
+
+    .input-shell input::placeholder,
+    .textarea-shell textarea::placeholder { color: rgba(140,75,90,0.55); }
+
+    .mini-title { margin: 0 0 6px; color: #874254; font-size: 0.70rem; font-weight: 800; }
+
+    .attendance-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .att-mini {
+      position: relative;
+      height: 30px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(232,128,158,0.42);
+      background: rgba(255,255,255,0.65);
+      color: #c45a7a;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 0.80rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.28s ease;
+    }
+
+    .att-mini.active {
+      background: linear-gradient(135deg, #ff8fb3 0%, #e982a0 50%, #f3a97f 100%);
+      color: white;
+      border: 2px solid rgba(255,215,150,0.9);
+      box-shadow: 0 0 0 3px rgba(255,215,150,0.45), 0 14px 28px rgba(232,111,151,0.34), inset 0 0 0 2px rgba(255,255,255,0.38);
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+
+    .att-mini.active::after {
+      content: "✦";
+      position: absolute;
+      right: 18px;
+      top: 9px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.9);
+      animation: sparkleMove 2.4s ease-in-out infinite;
+    }
+
+    .att-mini:hover { transform: translateY(-1px); }
+
+    .pax-mini {
+      display: grid;
+      grid-template-columns: 54px 30px 54px;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .pax-mini button {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(232,128,158,0.45);
+      background: rgba(255,240,246,0.72);
+      color: #7a2e3a;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .pax-mini button:hover { transform: translateY(-2px); box-shadow: 0 10px 18px rgba(232,111,151,0.18); }
+
+    .pax-mini input {
+      width: 70px;
+      border: none;
+      background: transparent;
+      text-align: center;
+      transform: translateX(-30px);
+      font-size: 1rem;
+      font-weight: 800;
+      color: #8a3a4a;
+      outline: none;
+    }
+
+    .pax-mini input::-webkit-outer-spin-button,
+    .pax-mini input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+    .textarea-shell {
+      min-height: 60px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(222,145,165,0.35);
+      box-shadow: 0 14px 28px rgba(160,70,90,0.07);
+      padding: 0;
+      transition: 0.25s ease;
+    }
+
+    .textarea-shell textarea {
+      width: 100%;
+      min-height: 60px;
+      border: none;
+      outline: none;
+      resize: none;
+      background: transparent;
+      padding: 10px 22px;
+      font-size: 0.70rem;
+      color: #5c3039;
+      font-family: inherit;
+    }
+
+    .submit-center { display: flex; justify-content: left; margin-top: 0px; transform: translateX(64px);}
+
+    .rsvp-btn {clip-path: inset(20px 0 40px 0);   position: relative; top: -40px; background: none; border: none; padding: 0; cursor: pointer; }
+    .rsvp-btn img { width: 210px; display: block; margin: 0 auto; transition: 0.3s ease; animation: rsvpBtnFloat 3.6s ease-in-out infinite; }
+    .rsvp-btn:hover img { transform: scale(1.05); }
+    /* .rsvp-btn:disabled { opacity: 0.65; pointer-events: none; } */
+
+    @keyframes crownFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 0 3px rgba(255,215,150,0.42), 0 14px 28px rgba(232,111,151,0.3), inset 0 0 0 2px rgba(255,255,255,0.38); }
+      50% { box-shadow: 0 0 0 5px rgba(255,215,150,0.65), 0 18px 34px rgba(232,111,151,0.42), inset 0 0 0 2px rgba(255,255,255,0.5); }
+    }
+    @keyframes sparkleMove { 0%,100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
+    @keyframes rsvpBtnFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+    /* ================= CONTACT ================= */
+    .contact-build-section {
+      position: relative;
+      width: 100%;
+      margin: -300px auto 0;
+      aspect-ratio: 9 / 16;
+      overflow: hidden;
+    }
+
+    .contact-layer { position: absolute; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+    .contact-bg-30 { inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .contact-glass-21,
+    .contact-corners-24,
+    .contact-crown-22,
+    .contact-seal-23,
+    .contact-divider-26,
+    .contact-cards-27,
+    .contact-div-28 { left: 50%; width: 100%; transform: translateX(-50%); }
+    .contact-glass-21 { top: 5px; z-index: 2; }
+    .contact-crown-22 { top: 0.8%; z-index: 5; animation: crownGlow 3s ease-in-out infinite; }
+    .contact-corners-24 { top: 5px; z-index: 4; }
+    .contact-flowers-25 { bottom: 0; left: 50%; width: 100%; transform: translateX(-50%); z-index: 3; animation: flowersFloat 4.5s ease-in-out infinite; }
+    .contact-seal-23 { top: 0.7%; z-index: 6; filter: drop-shadow(0 8px 14px rgba(122,46,58,0.18)); }
+    .contact-divider-26 { top: 4%; z-index: 6; opacity: 100; }
+    .contact-cards-27 { position: absolute; top: 3.6%; z-index: 7; }
+    .contact-div-28 { position: absolute; top: 4.6%; z-index: 8; }
+
+    .contact-title-html { position: absolute; top: 43%; left: 50%; transform: translateX(-50%); width: 80%; text-align: center; z-index: 9; }
+    .kicker { font-size: 0.75rem; letter-spacing: 4px; color: #caa86a; margin-bottom: 1px; }
+    .contact-title-html h2 { font-family: "Cormorant Garamond", serif; font-size: 1.2rem; color: #7a2e3a; margin: 0; line-height: 1.1; }
+    .contact-title-html p { font-size: 0.60rem; color: #7a6b6b; margin-top: 2px; line-height: 1.1; }
+
+    .contact-info-layer { position: absolute; top: 55.5%; left: 50%; width: 60%; transform: translateX(-50%); z-index: 9; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3%; text-align: center; }
+    .contact-person { color: #7a2e3a; text-decoration: none; display: block; }
+    .contact-person h3 { margin: 0px 0 0px; font-family: "Cormorant Garamond", serif; font-size: 1.1rem; color: #7a2e3a; }
+    .contact-person p { margin: 0 0 0px; font-size: 0.60rem; color: #5c4c4c; }
+
+    .ws-wrap { position: relative; display: inline-block; cursor: pointer; z-index: 50; }
+    .ws-btn { width: 30px; cursor: pointer; filter: drop-shadow(0 6px 10px rgba(122,46,58,0.2)); transition: transform 0.25s ease, filter 0.25s ease; animation: wsFloat 3.5s ease-in-out infinite; }
+    .ws-btn:hover { transform: scale(1.15); filter: drop-shadow(0 10px 18px rgba(255,182,193,0.6)); }
+
+    .ws-dot { position: absolute; left: 50%; top: 50%; font-size: 14px; color: #ffe27a !important; opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0.3); text-shadow: 0 0 6px #fff, 0 0 12px #ffd56a, 0 0 18px #ffcf5a; }
+    .ws-wrap.active .ws-dot-1 { animation: float1 0.8s ease forwards; }
+    .ws-wrap.active .ws-dot-2 { animation: float2 0.8s ease forwards; }
+    .ws-wrap.active .ws-dot-3 { animation: float3 0.8s ease forwards; }
+    .ws-wrap.active .ws-dot-4 { animation: float4 0.8s ease forwards; }
+
+    @keyframes crownGlow { 0%,100% { filter: drop-shadow(0 0 4px rgba(255,218,120,0.35)); } 50% { filter: drop-shadow(0 0 14px rgba(255,218,120,0.8)); } }
+    @keyframes flowersFloat { 0%,100% { transform: translateX(-50%) translateY(6px); } 50% { transform: translateX(-50%) translateY(12px); } }
+    @keyframes wsFloat { 0%,100% { transform: translateY(0); } 70% { transform: translateY(-2px); } }
+    @keyframes float1 { 20% { opacity: 1; } 100% { opacity: 0; transform: translate(-10px, -25px) scale(1.6); } }
+    @keyframes float2 { 20% { opacity: 1; } 100% { opacity: 0; transform: translate(12px, -20px) scale(1.5); } }
+    @keyframes float3 { 20% { opacity: 1; } 100% { opacity: 0; transform: translate(-8px, -15px) scale(1.4); } }
+    @keyframes float4 { 20% { opacity: 1; } 100% { opacity: 0; transform: translate(6px, -22px) scale(1.6); } }
+
+    /* ================= FOOTER / NAV / TOAST ================= */
+    .footer { text-align: center; padding: 18px 16px 34px; color: #6b5a5a; }
+    .footer-title { font-family: "Cormorant Garamond", serif; color: var(--maroon); font-size: 2rem; margin-bottom: 6px; font-weight: 700; }
+
+    .bottom-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(100vw, calc(100vh * 1080 / 1920));
+      background: rgba(255,250,247,0.96);
+      border-top: 1px solid rgba(120,100,100,0.12);
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.06);
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      padding: 10px 6px calc(10px + env(safe-area-inset-bottom));
+      z-index: 9999;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .bottom-bar-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; color: #1f1b1b; font-size: 0.72rem; font-weight: 700; min-height: 52px; }
+    .bottom-icon { font-size: 1.2rem; line-height: 1; }
+    .bottom-label { font-size: 0.7rem; line-height: 1.1; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 106px;
+      transform: translateX(-50%) translateY(22px) scale(0.98);
+      width: min(92%, 420px);
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 20px 50px rgba(122,46,58,0.16);
+      color: var(--text);
+      padding: 16px 18px;
+      border-radius: 20px;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.28s ease;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+
+    @media (max-width: 700px) {
+      .site-shell { width: 100%; box-shadow: none; }
+      .intro-title { font-size: clamp(2.5rem, 10vw, 4.2rem); }
+      .intro-note { max-width: 86%; }
+      .intro-couple { width: 34%; bottom: 5.2%; }
+      .flower-top-left,
+      .flower-top-right { width: 34%; }
+      .flower-bottom-left,
+      .flower-bottom-right { width: 33%; }
+      .flower-bottom-middle { width: 42%; }
+
+      .royal-scroll-frame { width: 82%; max-width: 380px; }
+      .royal-scroll-content { width: 58%; }
+      .royal-parents,
+      .royal-couple { font-size: 0.98rem; }
+      .royal-meta-title { font-size: 0.68rem; }
+
+      .countdown-card { padding: 24px 10px 18px; }
+      .countdown-rings { gap: 2px; }
+      .ring { --size: 68px; }
+      .ring-number { font-size: 1.05rem; }
+      .ring-label { font-size: 0.42rem; letter-spacing: 0.1em; }
+    }
+
+    @media (max-width: 480px) {
+      .rsvp-royal-shell { padding: 54px 24px 68px; }
+      .royal-rsvp-form.one-column { width: min(100%, 365px); gap: 5px; }
+      .field-row { grid-template-columns: 34px 1fr; gap: 10px; }
+      .side-icon { width: 30px; height: 30px; }
+      .rsvp-title { font-size: 2.15rem; }
+      .rsvp-btn img { width: 245px; }
+    }
+    /* FIX RSVP BUTTON CANNOT CLICK */
+.rsvp-royal-section {
+  position: relative;
+  z-index: 20;
+}
+
+.rsvp-royal-content,
+.royal-rsvp-form,
+.submit-center,
+.rsvp-btn {
+  position: relative;
+  z-index: 30;
+  pointer-events: auto;
+}
+
+.rsvp-btn img {
+  pointer-events: none;
+}
+
+.contact-build-section {
+  position: relative;
+  z-index: 5;
+}
+
+  </style>
+</head>
+<body class="popup-open">
+
+  <div class="curtain-popup" id="curtainPopup">
+    <div class="popup-stage">
+      <div class="popup-center-glow"></div>
+      <img src="images/3.png" alt="" class="popup-castle">
+      <img src="images/2.png" alt="" class="popup-sparkles">
+
+      <div class="popup-content" id="popupContent">
+        <button class="seal-btn" id="openInvitationBtn" aria-label="Open Invitation">
+          <img src="images/18.png" alt="Open Invitation">
+        </button>
+        <div class="sparkle-container" id="sparkleContainer"></div>
+      </div>
+
+      <div class="curtain-left"></div>
+      <div class="curtain-right"></div>
+    </div>
+  </div>
+
+  <div class="site-shell">
+    <section class="intro-section" id="intro">
+      <div class="intro-stage">
+        <img src="images/1.png" alt="" class="intro-layer intro-bgimg">
+        <img src="images/2.png" alt="" class="intro-layer intro-sparkles">
+        <img src="images/3.png" alt="" class="intro-layer intro-castle">
+        <img src="images/4.png" alt="" class="intro-layer intro-border">
+        <img src="images/5.png" alt="" class="intro-layer intro-chandelier">
+        <img src="images/6.png" alt="" class="intro-flower flower-top-left">
+        <img src="images/7.png" alt="" class="intro-flower flower-top-right">
+        <img src="images/8.png" alt="" class="intro-flower flower-bottom-middle">
+        <img src="images/9.png" alt="" class="intro-flower flower-bottom-left">
+        <img src="images/10.png" alt="" class="intro-flower flower-bottom-right">
+        <img src="images/11.png" alt="" class="intro-couple">
+
+        <div class="intro-copy">
+          <p class="intro-small">The Wedding of</p>
+          <h1 class="intro-title">Hassan<br>&amp;<br>Raihana</h1>
+          <p class="intro-note">Scroll ke bawah untuk melihat jemputan penuh.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="main-view">
+      <div class="frame-page">
+
+        <section class="royal-story-section" id="home">
+          <div class="container">
+            <div class="royal-story-wrap">
+              <div class="royal-bg-layer" id="royalBgLayer">
+                <img src="images/13.png" alt="" class="royal-bg-img">
+              </div>
+
+              <div class="royal-scroll-layer" id="royalScrollLayer">
+                <img src="images/17.png" alt="" class="royal-scroll-frame">
+
+                <div class="royal-scroll-content">
+                  <p class="arabic-text">ٱلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ ٱللَّٰهِ وَبَرَكَاتُهُ</p>
+
+                  <p class="royal-pantun">
+                    Bersemi kuntum di taman kayangan,
+                    Indah mekar penuh berseri;<br>
+                    Dua hati dalam ikatan,
+                    Melakar cinta abadi.
+                  </p>
+
+                  <div class="royal-parents">
+                    Azmi bin Murad<br>&amp;<br>
+                    Suzana binti Abu Bakar
+                  </div>
+
+                  <p class="royal-meta-invite">
+                    Dengan penuh hormat dan sukacitanya menjemput<br>
+                    Dato’ / Datin / Tuan / Puan / Encik / Cik<br>
+                    ke majlis persandingan putera-puteri kami
+                  </p>
+
+                  <div class="royal-couple">
+                    Raihanatuzzahra binti Azmi<br>&amp;<br>
+                    Syed Muhammad Hassan<br>bin Syed Jaafar
+                  </div>
+
+                  <div class="royal-meta-title">
+                    23 . 05 . 2026<br>11:00 AM – 4:00 PM<br>
+                    <a href="https://share.google/6AcuMVPb2sJvjeJBa" target="_blank" rel="noopener">
+                      📍 DTunjong Damansara<br>Banquets Hall
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section countdown-section" id="countdown">
+          <div class="container">
+            <div class="card countdown-card">
+              <div class="section-kicker">Menanti Hari Bahagia</div>
+
+              <div class="countdown-rings" aria-label="Countdown ke majlis">
+                <div class="ring-box">
+                  <div class="ring" data-max="365">
+                    <svg viewBox="0 0 140 140" aria-hidden="true">
+                      <defs><linearGradient id="goldGradientDays" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff3c4"/><stop offset="30%" stop-color="#e6c27a"/><stop offset="60%" stop-color="#c9a35f"/><stop offset="100%" stop-color="#f7e7b5"/></linearGradient></defs>
+                      <circle class="track" cx="70" cy="70" r="60"></circle>
+                      <circle class="progress progress-days" cx="70" cy="70" r="60"></circle>
+                    </svg>
+                    <div class="ring-content"><div class="ring-number" id="days">0</div><div class="ring-label">Days</div></div>
+                  </div>
+                </div>
+
+                <div class="ring-box">
+                  <div class="ring" data-max="24">
+                    <svg viewBox="0 0 140 140" aria-hidden="true">
+                      <defs><linearGradient id="goldGradientHours" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff3c4"/><stop offset="30%" stop-color="#e6c27a"/><stop offset="60%" stop-color="#c9a35f"/><stop offset="100%" stop-color="#f7e7b5"/></linearGradient></defs>
+                      <circle class="track" cx="70" cy="70" r="60"></circle>
+                      <circle class="progress progress-hours" cx="70" cy="70" r="60"></circle>
+                    </svg>
+                    <div class="ring-content"><div class="ring-number" id="hours">0</div><div class="ring-label">Hours</div></div>
+                  </div>
+                </div>
+
+                <div class="ring-box">
+                  <div class="ring" data-max="60">
+                    <svg viewBox="0 0 140 140" aria-hidden="true">
+                      <defs><linearGradient id="goldGradientMinutes" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff3c4"/><stop offset="30%" stop-color="#e6c27a"/><stop offset="60%" stop-color="#c9a35f"/><stop offset="100%" stop-color="#f7e7b5"/></linearGradient></defs>
+                      <circle class="track" cx="70" cy="70" r="60"></circle>
+                      <circle class="progress progress-minutes" cx="70" cy="70" r="60"></circle>
+                    </svg>
+                    <div class="ring-content"><div class="ring-number" id="minutes">0</div><div class="ring-label">Minutes</div></div>
+                  </div>
+                </div>
+
+                <div class="ring-box">
+                  <div class="ring" data-max="60">
+                    <svg viewBox="0 0 140 140" aria-hidden="true">
+                      <defs><linearGradient id="goldGradientSeconds" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff3c4"/><stop offset="30%" stop-color="#e6c27a"/><stop offset="60%" stop-color="#c9a35f"/><stop offset="100%" stop-color="#f7e7b5"/></linearGradient></defs>
+                      <circle class="track" cx="70" cy="70" r="60"></circle>
+                      <circle class="progress progress-seconds" cx="70" cy="70" r="60"></circle>
+                    </svg>
+                    <div class="ring-content"><div class="ring-number" id="seconds">0</div><div class="ring-label">Seconds</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="rsvp-royal-section scroll-reveal" id="rsvp">
+          <div class="rsvp-fullwidth">
+            <div class="rsvp-royal-shell">
+              <img src="images/33.png" alt="" class="rsvp-royal-bg">
+
+              <div class="rsvp-royal-content">
+                <!-- <div class="rsvp-crown">✦ 👑 ✦</div> -->
+                <div class="scroll-kicker">RSVP</div>
+                <h2 class="rsvp-title">Sahkan Kehadiran</h2>
+                <div class="royal-divider"></div>
+
+                <form id="rsvpForm" class="royal-rsvp-form one-column">
+                  <div class="field-row">
+                    <img src="images/35.png" class="side-icon" alt="">
+                    <div class="input-shell">
+                      <input id="fullName" name="fullName" required placeholder="Nama penuh">
+                    </div>
+                  </div>
+
+                  <div class="field-row">
+                    <img src="images/36.png" class="side-icon" alt="">
+                    <div class="input-shell">
+                      <input id="phone" name="phone" required placeholder="Nombor telefon">
+
+                    </div>
+                  </div>
+
+                  <div class="field-row align-top">
+                    <img src="images/37.png" class="side-icon" alt="">
+                    <div class="form-group">
+                      <p class="mini-title">Kehadiran</p>
+                      <div class="attendance-mini">
+                        <button type="button" class="att-mini active" data-value="Hadir">Hadir</button>
+                        <button type="button" class="att-mini" data-value="Tidak Hadir">Tidak Hadir</button>
+                      </div>
+                      <input type="hidden" id="attendance" name="attendance" value="Hadir">
+                    </div>
+                  </div>
+
+                  <div class="field-row align-top">
+                    <img src="images/38.png" class="side-icon" alt="">
+                    <div class="form-group">
+                      <p class="mini-title">Bilangan tetamu</p>
+                      <div class="pax-mini">
+                        <button type="button" id="minusPax">−</button>
+                        <input id="pax" name="pax" type="number" min="0" max="20" value="1" required>
+                        <button type="button" id="plusPax">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field-row align-top">
+                    <img src="images/39.png" class="side-icon" alt="">
+                    <div class="textarea-shell">
+                      <textarea id="message" name="message" placeholder="Ucapan / nota (optional)"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="submit-center">
+                    <button type="submit" class="rsvp-btn" id="submitBtn">
+                      <img src="images/34.png" alt="Hantar RSVP">
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="contact-build-section" id="contacts">
+          <img src="images/30.png" class="contact-layer contact-bg-30" alt="">
+          <img src="images/21.png" class="contact-layer contact-glass-21" alt="">
+          <img src="images/22.png" class="contact-layer contact-crown-22" alt="">
+          <img src="images/24.png" class="contact-layer contact-corners-24" alt="">
+          <img src="images/25.png" class="contact-layer contact-flowers-25" alt="">
+          <img src="images/23.png" class="contact-layer contact-seal-23" alt="">
+          <img src="images/26.png" class="contact-layer contact-divider-26" alt="">
+          <img src="images/27.png" class="contact-layer contact-cards-27" alt="">
+          <img src="images/28.png" class="contact-layer contact-div-28" alt="">
+
+          <div class="contact-title-html">
+            <span class="kicker">HUBUNGI</span>
+            <h2>Nombor Untuk Dihubungi</h2>
+            <p>Sekiranya ada sebarang pertanyaan,<br>boleh hubungi wakil keluarga di bawah.</p>
+          </div>
+
+          <div class="contact-info-layer">
+            <div class="contact-person person-1">
+              <div class="ws-wrap" data-link="https://wa.me/60193326456">
+                <img src="images/31.png" class="ws-btn" alt="WhatsApp">
+                <span class="ws-dot ws-dot-1">✦</span><span class="ws-dot ws-dot-2">✦</span><span class="ws-dot ws-dot-3">✦</span><span class="ws-dot ws-dot-4">✦</span>
+              </div>
+              <h3>Azmi</h3>
+              <p>019-3326456</p>
+            </div>
+
+            <div class="contact-person person-2">
+              <div class="ws-wrap" data-link="https://wa.me/60134146094">
+                <img src="images/31.png" class="ws-btn" alt="WhatsApp">
+                <span class="ws-dot ws-dot-1">✦</span><span class="ws-dot ws-dot-2">✦</span><span class="ws-dot ws-dot-3">✦</span><span class="ws-dot ws-dot-4">✦</span>
+              </div>
+              <h3>Husain</h3>
+              <p>013-4146094</p>
+            </div>
+
+            <div class="contact-person person-3">
+              <div class="ws-wrap" data-link="https://wa.me/60172607616">
+                <img src="images/31.png" class="ws-btn" alt="WhatsApp">
+                <span class="ws-dot ws-dot-1">✦</span><span class="ws-dot ws-dot-2">✦</span><span class="ws-dot ws-dot-3">✦</span><span class="ws-dot ws-dot-4">✦</span>
+              </div>
+              <h3>Susan</h3>
+              <p>017-2607616</p>
+            </div>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <div class="container">
+            <div class="footer-title">Hassan &amp; Raihana</div>
+            <p>Terima kasih atas doa, kasih sayang dan sokongan anda.</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-bar">
+    <a href="#rsvp" class="bottom-bar-item"><span class="bottom-icon">✉️</span><span class="bottom-label">RSVP</span></a>
+    <a href="#contacts" class="bottom-bar-item"><span class="bottom-icon">📞</span><span class="bottom-label">Hubungi</span></a>
+    <a href="#gallery" class="bottom-bar-item"><span class="bottom-icon">🖼️</span><span class="bottom-label">Galeri</span></a>
+    <a href="https://share.google/6AcuMVPb2sJvjeJBa" target="_blank" class="bottom-bar-item" rel="noopener"><span class="bottom-icon">📍</span><span class="bottom-label">Lokasi</span></a>
+    <a href="#wishes" class="bottom-bar-item"><span class="bottom-icon">💌</span><span class="bottom-label">Ucapan</span></a>
+    <a href="#home" class="bottom-bar-item"><span class="bottom-icon">🏰</span><span class="bottom-label">Utama</span></a>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzykCQPC-KYh1z_2iBtbpb7XaGX05GE4LhXxmv8VvYceIAfs4g1obiZR4R-lQheEDZVTg/exec";
+    const eventDate = new Date("2026-05-23T11:00:00+08:00").getTime();
+
+    function setRingProgress(selector, value, max) {
+      const circle = document.querySelector(selector);
+      if (!circle) return;
+      const circumference = 377;
+      const percent = Math.max(0, Math.min(value / max, 1));
+      circle.style.strokeDashoffset = circumference - circumference * percent;
+    }
+
+    function updateCountdown() {
+      const gap = eventDate - new Date().getTime();
+      const daysEl = document.getElementById("days");
+      const hoursEl = document.getElementById("hours");
+      const minutesEl = document.getElementById("minutes");
+      const secondsEl = document.getElementById("seconds");
+      if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+
+      if (gap <= 0) {
+        daysEl.textContent = hoursEl.textContent = minutesEl.textContent = secondsEl.textContent = "00";
+        setRingProgress(".progress-days", 0, 365);
+        setRingProgress(".progress-hours", 0, 24);
+        setRingProgress(".progress-minutes", 0, 60);
+        setRingProgress(".progress-seconds", 0, 60);
+        return;
+      }
+
+      const days = Math.floor(gap / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((gap / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((gap / (1000 * 60)) % 60);
+      const seconds = Math.floor((gap / 1000) % 60);
+
+      daysEl.textContent = String(days).padStart(2, "0");
+      hoursEl.textContent = String(hours).padStart(2, "0");
+      minutesEl.textContent = String(minutes).padStart(2, "0");
+      secondsEl.textContent = String(seconds).padStart(2, "0");
+
+      setRingProgress(".progress-days", days, 365);
+      setRingProgress(".progress-hours", hours, 24);
+      setRingProgress(".progress-minutes", minutes, 60);
+      setRingProgress(".progress-seconds", seconds, 60);
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    const attendanceButtons = document.querySelectorAll(".att-mini");
+    const attendanceInput = document.getElementById("attendance");
+    const paxInput = document.getElementById("pax");
+    const minusPax = document.getElementById("minusPax");
+    const plusPax = document.getElementById("plusPax");
+    const toast = document.getElementById("toast");
+    const form = document.getElementById("rsvpForm");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function setPaxDisabled(disabled) {
+      paxInput.readOnly = disabled;
+      minusPax.disabled = disabled;
+      plusPax.disabled = disabled;
+    }
+
+    attendanceButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        attendanceButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const value = btn.dataset.value;
+        attendanceInput.value = value;
+
+        if (value === "Tidak Hadir") {
+          paxInput.value = 0;
+          setPaxDisabled(true);
+        } else {
+          if (parseInt(paxInput.value, 10) === 0) paxInput.value = 1;
+          setPaxDisabled(false);
+        }
+      });
+    });
+
+    minusPax.addEventListener("click", () => {
+      if (attendanceInput.value === "Tidak Hadir") return;
+      const value = parseInt(paxInput.value, 10) || 1;
+      paxInput.value = Math.max(1, value - 1);
+    });
+
+    plusPax.addEventListener("click", () => {
+      if (attendanceInput.value === "Tidak Hadir") return;
+      const value = parseInt(paxInput.value, 10) || 1;
+      paxInput.value = Math.min(20, value + 1);
+    });
+
+    paxInput.addEventListener("input", () => {
+      if (attendanceInput.value === "Tidak Hadir") {
+        paxInput.value = 0;
+        return;
+      }
+      const value = parseInt(paxInput.value, 10);
+      if (isNaN(value) || value < 1) return;
+      if (value > 20) paxInput.value = 20;
+    });
+
+    function showToast(message, isError = false) {
+      toast.textContent = message;
+      toast.style.border = isError ? "1px solid rgba(180,30,30,0.18)" : "1px solid rgba(255,255,255,0.7)";
+      toast.style.color = isError ? "#8b1f1f" : "var(--text)";
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3500);
+    }
+
+    function submitViaJSONP(data) {
+      return new Promise((resolve, reject) => {
+        const callbackName = "jsonpCallback_" + Date.now();
+
+        window[callbackName] = function(response) {
+          resolve(response);
+          cleanup();
+        };
+
+        function cleanup() {
+          delete window[callbackName];
+          const oldScript = document.getElementById(callbackName);
+          if (oldScript) oldScript.remove();
+        }
+
+        const params = new URLSearchParams({
+          callback: callbackName,
+          submit: "1",
+          fullName: data.fullName,
+          phone: data.phone,
+          side: data.side,
+          pax: data.pax,
+          attendance: data.attendance,
+          message: data.message
+        });
+
+        const script = document.createElement("script");
+        script.src = `${APPS_SCRIPT_URL}?${params.toString()}`;
+        script.id = callbackName;
+        script.onerror = function() {
+          reject(new Error("Gagal sambung ke server RSVP."));
+          cleanup();
+        };
+
+        document.body.appendChild(script);
+
+        setTimeout(() => {
+          if (document.getElementById(callbackName)) {
+            reject(new Error("Permintaan mengambil masa terlalu lama."));
+            cleanup();
+          }
+        }, 12000);
+      });
+    }
+
+ form.addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const fullNameEl = form.querySelector("#fullName");
+  const phoneEl = form.querySelector("#phone");
+  const paxEl = form.querySelector("#pax");
+  const attendanceEl = form.querySelector("#attendance");
+  const messageEl = form.querySelector("#message");
+
+  const data = {
+    fullName: fullNameEl.value.trim(),
+    phone: phoneEl.value.trim(),
+    side: "Tidak dinyatakan",
+    pax: paxEl.value,
+    attendance: attendanceEl.value,
+    message: messageEl.value.trim()
+  };
+
+  if (!data.fullName) {
+    showToast("Sila isi nama penuh.", true);
+    return;
+  }
+
+  if (!data.phone) {
+    showToast("Sila isi nombor telefon.", true);
+    return;
+  }
+
+  if (data.pax === "" || data.pax === null) {
+    showToast("Sila isi bilangan tetamu.", true);
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.classList.add("loading");
+
+  try {
+    const result = await submitViaJSONP(data);
+
+    if (result && result.status === "success") {
+      showToast("RSVP berjaya dihantar. Terima kasih 🌸");
+
+      form.reset();
+      attendanceInput.value = "Hadir";
+      paxInput.value = 1;
+      setPaxDisabled(false);
+
+      attendanceButtons.forEach((b, index) => {
+        b.classList.remove("active");
+        if (index === 0) b.classList.add("active");
+      });
+    } else {
+      showToast((result && result.message) || "Maaf, RSVP tidak berjaya dihantar.", true);
+    }
+  } catch (error) {
+    showToast(error.message || "Ralat berlaku semasa menghantar RSVP.", true);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.classList.remove("loading");
+  }
+});
+
+
+    const curtainPopup = document.getElementById("curtainPopup");
+    const sparkleContainer = document.getElementById("sparkleContainer");
+    const sealBtn = document.getElementById("openInvitationBtn");
+
+    document.body.classList.add("popup-open");
+
+    sealBtn.addEventListener("click", () => {
+      sealBtn.classList.add("shrink");
+
+      for (let i = 0; i < 25; i++) {
+        const sparkle = document.createElement("div");
+        sparkle.classList.add("sparkle");
+        sparkle.style.left = "50%";
+        sparkle.style.top = "50%";
+        sparkle.style.setProperty("--x", (Math.random() - 0.5) * 250 + "px");
+        sparkle.style.setProperty("--y", (Math.random() - 0.5) * 250 + "px");
+        sparkleContainer.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 800);
+      }
+
+      setTimeout(() => {
+        curtainPopup.classList.add("open");
+        setTimeout(() => {
+          curtainPopup.classList.add("hide");
+          document.body.classList.remove("popup-open");
+        }, 1900);
+      }, 500);
+    });
+
+    const revealSections = document.querySelectorAll(".scroll-reveal");
+    const royalBgLayer = document.getElementById("royalBgLayer");
+    const royalScrollLayer = document.getElementById("royalScrollLayer");
+
+    function revealOnScroll() {
+      revealSections.forEach(section => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 100) section.classList.add("show");
+      });
+    }
+
+    function revealRoyalStory() {
+      if (!royalBgLayer || !royalScrollLayer) return;
+      if (royalBgLayer.getBoundingClientRect().top < window.innerHeight - 120) royalBgLayer.classList.add("show");
+      if (royalScrollLayer.getBoundingClientRect().top < window.innerHeight - 20) royalScrollLayer.classList.add("show");
+    }
+
+    window.addEventListener("scroll", () => {
+      revealOnScroll();
+      revealRoyalStory();
+    });
+
+    window.addEventListener("load", () => {
+      revealOnScroll();
+      revealRoyalStory();
+    });
+
+    document.querySelectorAll(".ws-wrap").forEach(btn => {
+      btn.addEventListener("click", () => {
+        btn.classList.remove("active");
+        void btn.offsetWidth;
+        btn.classList.add("active");
+
+        const link = btn.getAttribute("data-link");
+        setTimeout(() => {
+          window.open(link, "_blank");
+          btn.classList.remove("active");
+        }, 700);
+      });
+    });
+  </script>
+</body>
+</html>
